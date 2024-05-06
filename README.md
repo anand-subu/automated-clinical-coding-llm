@@ -32,12 +32,17 @@ While I've highlighted the main differences in my implementation, there may be s
 * I've reconstructed the prompts based on the examples based in the paper. There could be some minor differences in the prompt that may affect the performance.
 
 ### Results
-The results of the evaluations are presented here. This was possible, thanks to the authors of the paper who shared their evaluation code when I communicated with them.
+The results of the evaluations are presented here. This was possible, thanks to the authors of the paper who shared their evaluation code when I communicated with them. 
+However, while my implementation's metrics are roughly in the ball-park  of the reported scores, there are some note-worthy differences:
+1. In my implementation, GPT-3.5's micro-average metrics slightly exceed the reported figures, whereas the macro-average metrics fall a bit short of the reported values.
+2. In my implementation, Llama-70B's micro-average metrics either match or slightly exceed the reported figures, but the macro-average metrics are lesser than the reported values.
+
+As mentioned, this implementation differs from the paper in some small ways, all of which impact the performance of this implementation.
 
 | Model     | Micro-Average Precision | Micro-Average Recall | Micro-Average F1-Score | Macro-Average Precision | Macro-Average Recall | Macro-Average F1-Score |
 |-----------|:-----------------------:|:--------------------:|:----------------------:|:-----------------------:|:--------------------:|:----------------------:|
 | GPT-3.5   |           0.173         |        0.241         |        0.201           |           0.219         |         0.213        |        0.196           |
-| Llama-70B |                         |                      |                        |                         |                      |                        |
+| Llama-70B |           0.051         |        0.172         |        0.078           |           0.113         |         0.155        |         0.11           |
 
 ### Citation
 If you use this code, please cite the original papers:
