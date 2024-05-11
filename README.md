@@ -14,6 +14,56 @@ The search process operates as follows:
 3. **Iteration**: Proceeds iteratively, exploring further until no viable paths remain.
 4. **Conclusion**: Identifies the most relevant ICD codes and adds them as predicted labels for the medical note.
 
+### Running the code
+
+#### Download the CodiEsp Dataset
+You can download the CodiEsp Dataset from this [link](https://zenodo.org/records/3837305#.XsZFoXUzZpg)
+
+#### Configure the OpenAI credentials for the client
+* In order to run this code, you need to configure the credentials for accessing the LLMs via API. For this, you need API keys for GPT-3.5/GPT-4 and Llama-2 70B Chat.
+
+* For GPT-3.5/GPT-4, you need to create an account with OpenAI and create an API key.
+
+* For Llama-2 70B Chat, you can create an account with [deepinfra](https://deepinfra.com/). You can create an API key, and then create an deployment of Llama-2 70B Chat, and obtain the base url for this deployment.
+
+* Both LLMs can be accessed through the `openai` library, and Line 9 in `helpers.py` need to be configured as follows:
+
+##### For GPT-3.5/GPT-4
+```
+client = OpenAI(api_key=<OPEN_AI_API_KEY>)
+```
+##### For Llama-2 70B Chat
+```
+client = OpenAI(api_key=<DEEP_INFRA_API_KEY>,  base_url=<DEEP_INFRA_DEPLOYMENT_URL>)
+```
+
+#### Translate the Spanish medical notes to English
+Once you've downloaded the dataset, run 
+
+```
+python translate_files.py --input_dir <input_dir_with_spanish_test_set> --output_dir <output_dir_to_save_files_to>
+```
+
+The script will use GPT-3.5 to translate the files and then save the outputs to the directory.
+
+#### Run the Tree Search Algorithm
+After translating the dataset, run
+
+```
+python run_tree_search.py --input_dir <translated_en_test_set_dir> --output_file <output_json_to_save_results> --model_name <model_name>
+```
+
+The model name can be either `gpt-3.5-turbo-0613` for GPT-3.5 or `meta-llama/Llama-2-70b-chat-hf` for Llama-2 70B Chat. The output predictions are dumped as a json file.
+
+#### Evaluate the performance
+The performance is evaluated in terms of macro-average and micro-average precision, recall and f1-scores.
+The script for evaluation was provided by the authors of the [paper](https://openreview.net/pdf?id=mqnR8rGWkn). The modified evaluation script provided by the authors, is a modified version of the CodiEsp Shared Task Evaluation script.
+Run the script as:
+```
+python evaluate_performace.py --input_json <path_to_predictions_json_file> --gold_standard_tsv <path_to_gold_standard_test_tsv>
+```
+Please note the script internally converts the predictions_json file to a tsv file format, and also modifies the gold standard tsv file by adding the appropriate column names and dumps the modified version locally. This is then removed by the script after evaluation is complete.
+
 ### Differences in Implementation from the original paper
 **Please note** this is purely my implementation based on my understanding of the paper, and may differ in some areas compared to the original implementation, which may impact the results obtained by running this.
 I've jotted down a few potential differences:
@@ -37,12 +87,12 @@ However, while my implementation's metrics are roughly in the ball-park  of the 
 1. In my implementation, GPT-3.5's micro-average metrics slightly exceed the reported figures, whereas the macro-average metrics fall a bit short of the reported values.
 2. In my implementation, Llama-70B's micro-average metrics either match or slightly exceed the reported figures, but the macro-average metrics are lesser than the reported values.
 
-As mentioned, this implementation differs from the paper in some small ways, all of which impact the performance of this implementation.
+As mentioned earlier, this implementation differs from the paper in some small ways, all of which impact the final performance.
 
 | Model     | Micro-Average Precision | Micro-Average Recall | Micro-Average F1-Score | Macro-Average Precision | Macro-Average Recall | Macro-Average F1-Score |
 |-----------|:-----------------------:|:--------------------:|:----------------------:|:-----------------------:|:--------------------:|:----------------------:|
 | GPT-3.5   |           0.173         |        0.241         |        0.201           |           0.219         |         0.213        |        0.196           |
-| Llama-70B |           0.051         |        0.172         |        0.078           |           0.113         |         0.155        |         0.11           |
+| Llama-2 70B Chat|           0.051         |        0.172         |        0.078           |           0.113         |         0.155        |         0.11           |
 
 ### Citation
 If you use this code, please cite the original papers:
