@@ -57,7 +57,7 @@ The model name can be either `gpt-3.5-turbo-0613` for GPT-3.5 or `meta-llama/Lla
 
 #### Evaluate the performance
 The performance is evaluated in terms of macro-average and micro-average precision, recall and f1-scores.
-The script for evaluation was provided by the authors of the [paper](https://openreview.net/pdf?id=mqnR8rGWkn). The modified evaluation script provided by the authors, is a modified version of the CodiEsp Shared Task Evaluation script.
+The script for evaluation was provided by the authors of the [paper](https://openreview.net/pdf?id=mqnR8rGWkn). The evaluation script provided by the authors, is a modified version of the CodiEsp Shared Task Evaluation script.
 Run the script as:
 ```
 python evaluate_performace.py --input_json <path_to_predictions_json_file> --gold_standard_tsv <path_to_gold_standard_test_tsv>
